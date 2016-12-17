@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class AvatarMovement : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class AvatarMovement : MonoBehaviour
                 {
                     Debug.Log("No Rigidbody component found! Creating new component...");
                     m_rb = this.gameObject.AddComponent<Rigidbody>();
+                    m_rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
                 }
             }
             return m_rb;
@@ -26,9 +28,13 @@ public class AvatarMovement : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+#if UNITY_EDITOR
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-
+#elif UNITY_IOS || UNITY_ANDROID
+        float h = CrossPlatformInputManager.GetAxis("Horizontal");
+        float v = CrossPlatformInputManager.GetAxis("Vertical");
+#endif
         if (h != 0 || v != 0)
         {
             Move(h, v);
